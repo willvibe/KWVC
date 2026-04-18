@@ -6,6 +6,9 @@ const fs = require('fs');
 
 function checkAdmin(req, res, next) {
     if (req.session && req.session.admin) return next();
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(401).json({ success: false, message: '未登录' });
+    }
     res.redirect('/admin/login');
 }
 
