@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/images/kaiwen-logo.png" alt="凯文教育" class="nav-logo-img" onerror="this.onerror=null;this.src='/images/logo-white.svg'">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">大赛介绍</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/announcements">动态公告</a></li>
+                    <% if (typeof user !== 'undefined' && user) { %>
+                    <li class="nav-item"><a class="nav-link <%= currentPath === '/my' ? 'active' : '' %>" href="/my"><i class="bi bi-person-fill"></i> 个人中心</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> 退出</a></li>
+                    <% } else { %>
+                    <li class="nav-item"><a class="nav-link" href="/auth/login"><i class="bi bi-box-arrow-in-right"></i> 登录</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-hero" style="padding: 15px 0; min-height: auto;">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <h1>提交作品</h1>
+                <p>提交您的参赛作品，展示创新实力</p>
+            </div>
+        </section>
+
+        <% if (success) { %>
+        <section class="section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="success-card">
+                            <div class="success-icon"><i class="bi bi-check-circle-fill"></i></div>
+                            <h2>作品提交成功！</h2>
+                            <p>您的作品已成功提交，评审团将对您的作品进行评审。</p>
+                            <div class="success-actions">
+                                <a href="/my" class="btn btn-hero-primary">返回个人中心</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <% } else { %>
+        <section class="section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <% if (error) { %>
+                        <div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill"></i> <%= error %></div>
+                        <% } %>
+                        <div class="register-form-card">
+                            <div class="submit-requirements">
+                                <h4><i class="bi bi-info-circle"></i> 作品提交要求</h4>
+                                <p>我们摒弃传统的冗长 PPT 汇报，采用更符合 AI 时代逻辑的"三位一体"提交方式：</p>
+                                <ol>
+                                    <li><strong>在线链接或GitHub仓库：</strong>作品最好部署在云端（如 Cloudflare Pages/Vercel），评委将直接在浏览器中进行沉浸式交互体验。</li>
+                                    <li><strong>B站视频（10分钟左右）：</strong>无需精美剪辑，只需录屏演示解说介绍：我发现了什么痛点？我如何利用 AI 解决它？这个应用的价值是什么？</li>
+                                    <li><strong>README.pdf文档：</strong>项目详细介绍，请上传PDF格式的文档。</li>
+                                </ol>
+                            </div>
+                            <form action="/my/submit-work" method="POST" enctype="multipart/form-data">
+                                <div class="form-section">
+                                    <h3 class="form-section-title"><i class="bi bi-lightbulb-fill"></i> 作品信息</h3>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">作品名称 <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="title" value="<%= formData.title || '' %>" required placeholder="请输入作品名称">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">参赛赛道 <span class="text-danger">*</span></label>
+                                            <select class="form-select" name="category" required>
+                                                <option value="">请选择赛道</option>
+                                                <option value="智慧教育" <% if (formData.category === '智慧教育') { %>selected<% } %>>智慧教育</option>
+                                                <option value="数字商业" <% if (formData.category === '数字商业') { %>selected<% } %>>数字商业</option>
+                                                <option value="智慧城市" <% if (formData.category === '智慧城市') { %>selected<% } %>>智慧城市</option>
+                                                <option value="健康医疗" <% if (formData.category === '健康医疗') { %>selected<% } %>>健康医疗</option>
+                                                <option value="开放创新" <% if (formData.category === '开放创新') { %>selected<% } %>>开放创新</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-section">
+                                    <h3 class="form-section-title"><i class="bi bi-link-45deg"></i> 在线演示（必填）</h3>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label">在线链接或GitHub仓库地址 <span class="text-danger">*</span></label>
+                                            <input type="url" class="form-control" name="demo_url" value="<%= formData.demo_url || '' %>" required placeholder="https://your-project.cloudflarepages.com 或 https://github.com/username/repo">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-section">
+                                    <h3 class="form-section-title"><i class="bi bi-tv"></i> 演示视频（必填）</h3>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label">B站视频链接 <span class="text-danger">*</span></label>
+                                            <input type="url" class="form-control" name="video_url" value="<%= formData.video_url || '' %>" required placeholder="https://www.bilibili.com/video/BV1xx411c7BF">
+                                            <small class="text-muted">录制10分钟左右的产品路演视频，上传至B站后在此粘贴链接</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-section">
+                                    <h3 class="form-section-title"><i class="bi bi-file-earmark-pdf"></i> 项目文档（必填）</h3>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label">README.pdf 文档 <span class="text-danger">*</span></label>
+                                            <input type="file" class="form-control" name="readme_file" accept=".pdf" required>
+                                            <small class="text-muted">请上传PDF格式的项目详细介绍文档（不超过10MB）</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-section">
+                                    <h3 class="form-section-title"><i class="bi bi-tools"></i> 技术信息</h3>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">使用的零代码平台</label>
+                                            <input type="text" class="form-control" name="tech_platform" value="<%= formData.tech_platform || '' %>" placeholder="例如：钉钉宜搭、简道云、微搭等">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">作品描述</label>
+                                            <textarea class="form-control" name="description" rows="4" placeholder="请简要描述您的作品功能、创新点和应用场景"><%= formData.description || '' %></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-hero-primary btn-lg"><i class="bi bi-upload"></i> 提交作品</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <% } %>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 凯文教育集团 版权所有 | 凯文杯-首届VibeCoding零代码项目创作大赛</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

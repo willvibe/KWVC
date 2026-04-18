@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body{background:#f5f7fa;color:#333;font-family:'Noto Sans SC',-apple-system,'PingFang SC','Microsoft YaHei',sans-serif}
+        .admin-sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:#0d2240;border-right:2px solid #c8a45c;padding:20px 0;z-index:100}
+        .admin-sidebar .sidebar-brand{padding:0 20px 20px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:20px}
+        .admin-sidebar .sidebar-brand h5{color:#c8a45c;margin:0}
+        .admin-sidebar .nav-link{color:rgba(255,255,255,0.6);padding:12px 20px;display:flex;align-items:center;gap:10px;transition:all 0.3s}
+        .admin-sidebar .nav-link:hover,.admin-sidebar .nav-link.active{color:#fff;background:rgba(200,164,92,0.15);border-left:3px solid #c8a45c}
+        .admin-sidebar .nav-link i{font-size:18px}
+        .admin-main{margin-left:240px;padding:30px;min-height:100vh}
+        .admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+        .admin-header h3{color:#1a3a6c;margin:0}
+        .admin-table{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e0e4ea;box-shadow:0 2px 10px rgba(0,0,0,0.04)}
+        .admin-table table{margin:0;color:#333}
+        .admin-table thead{background:#1a3a6c}
+        .admin-table th{color:#fff;font-weight:500;border:none;padding:14px 16px}
+        .admin-table td{border-color:#e0e4ea;padding:12px 16px;vertical-align:middle}
+        .admin-table tbody tr:hover{background:rgba(26,58,108,0.04)}
+        .btn-admin{background:linear-gradient(135deg,#1a3a6c,#0d2240);border:none;color:#fff}
+        .btn-outline-admin{border:1px solid #1a3a6c;color:#1a3a6c;background:transparent}
+        .btn-outline-admin:hover{background:#1a3a6c;color:#fff}
+        .form-control:focus{border-color:#1a3a6c;box-shadow:0 0 0 0.2rem rgba(26,58,108,0.15)}
+        .rich-editor-toolbar{display:flex;gap:6px;padding:8px;background:#f5f7fa;border:1px solid #e0e4ea;border-bottom:none;border-radius:8px 8px 0 0;flex-wrap:wrap;align-items:center}
+        .rich-editor-toolbar button{border:1px solid #e0e4ea;background:#fff;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:14px;color:#333;transition:all 0.2s}
+        .rich-editor-toolbar button:hover{background:#1a3a6c;color:#fff}
+        .rich-editor-toolbar .separator{width:1px;height:24px;background:#e0e4ea;margin:0 4px}
+        .rich-editor{border:1px solid #e0e4ea;border-radius:0 0 8px 8px;min-height:300px;padding:12px;background:#fff;outline:none;font-size:15px;line-height:1.8}
+        .rich-editor:focus{border-color:#1a3a6c;box-shadow:0 0 0 0.2rem rgba(26,58,108,0.15)}
+        .rich-editor img{max-width:100%;border-radius:8px;margin:8px 0;cursor:pointer;position:relative}
+        .rich-editor .media-wrapper{position:relative;display:inline-block;margin:8px 0;vertical-align:top}
+        .rich-editor .media-wrapper .media-overlay{position:absolute;top:4px;right:4px;background:rgba(220,53,69,0.9);color:#fff;border:none;border-radius:50%;width:24px;height:24px;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:12px;line-height:1}
+        .rich-editor .media-wrapper .media-overlay.edit-btn{right:32px;background:rgba(26,58,108,0.9)}
+        .rich-editor .media-wrapper:hover .media-overlay{display:flex}
+        .rich-editor .media-wrapper img{max-width:100%;border-radius:8px}
+        .rich-editor .media-wrapper iframe{border-radius:8px;border:none}
+        .rich-editor .video-container{position:relative;margin:8px 0}
+        .rich-editor .video-container iframe{width:100%;aspect-ratio:16/9;border-radius:8px;border:none}
+        .ratio-slider{width:100%;margin:8px 0}
+        .ratio-preview{text-align:center;font-size:14px;color:#1a3a6c;font-weight:600;margin-top:8px}
+        .modal-content{background:#fff;border:1px solid #e0e4ea;color:#333}
+        .modal-header{border-bottom-color:#e0e4ea}
+        .form-label{font-weight:500}
+        .upload-area{border:2px dashed #e0e4ea;border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all 0.3s;background:#fafbfc}
+        .upload-area:hover{border-color:#1a3a6c;background:#f0f4ff}
+        .upload-area i{font-size:32px;color:#1a3a6c;margin-bottom:8px}
+        .upload-progress{display:none;margin-top:10px}
+        .upload-progress .progress{height:8px}
+        .media-type-tabs{display:flex;gap:8px;margin-bottom:12px}
+        .media-type-tabs button{flex:1;padding:8px;border:1px solid #e0e4ea;background:#fff;border-radius:6px;cursor:pointer;font-size:13px;color:#333;transition:all 0.2s}
+        .media-type-tabs button.active{background:#1a3a6c;color:#fff;border-color:#1a3a6c}
+        .media-type-tabs button:hover:not(.active){background:#f5f7fa}
+        .media-toolbar{position:absolute;top:-36px;left:0;display:none;gap:4px;background:rgba(26,58,108,0.9);padding:4px 8px;border-radius:6px;z-index:10}
+        .media-wrapper:hover .media-toolbar{display:flex}
+        .media-toolbar button{background:none;border:none;color:#fff;cursor:pointer;padding:2px 6px;font-size:12px;border-radius:3px}
+        .media-toolbar button:hover{background:rgba(255,255,255,0.2)}
+        .media-toolbar .ratio-label{color:rgba(255,255,255,0.8);font-size:12px;line-height:24px}
+    </style>
+</head>
+<body>
+    <div class="admin-sidebar">
+        <div class="sidebar-brand"><h5><i class="bi bi-trophy-fill"></i> 凯文杯管理</h5></div>
+        <nav class="nav flex-column">
+            <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> 仪表盘</a>
+            <a class="nav-link" href="/admin/users"><i class="bi bi-person-gear"></i> 注册用户</a>
+            <a class="nav-link" href="/admin/registrations"><i class="bi bi-people-fill"></i> 报名管理</a>
+            <a class="nav-link" href="/admin/works"><i class="bi bi-folder2-open"></i> 作品管理</a>
+            <a class="nav-link active" href="/admin/announcements"><i class="bi bi-megaphone-fill"></i> 公告管理</a>
+            <a class="nav-link" href="/admin/site-config"><i class="bi bi-gear-fill"></i> 首页设置</a>
+            <a class="nav-link" href="/admin/logout"><i class="bi bi-box-arrow-left"></i> 退出登录</a>
+        </nav>
+    </div>
+    <div class="admin-main">
+        <div class="admin-header">
+            <h3>公告管理</h3>
+            <button class="btn btn-admin" data-bs-toggle="modal" data-bs-target="#addAnnModal"><i class="bi bi-plus-circle"></i> 发布公告</button>
+        </div>
+        <div class="admin-table">
+            <table class="table">
+                <thead><tr><th>标题</th><th>类型</th><th>置顶</th><th>发布时间</th><th>操作</th></tr></thead>
+                <tbody>
+                    <% announcements.forEach(a => { %>
+                    <tr>
+                        <td><%= a.title %></td>
+                        <td><%= a.type === 'notice' ? '通知' : a.type === 'news' ? '新闻' : '更新' %></td>
+                        <td><%= a.is_top ? '是' : '否' %></td>
+                        <td><%= new Date(a.created_at).toLocaleString('zh-CN') %></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editAnn(<%= a.id %>, '<%= a.title %>', '<%= a.type %>', <%= a.is_top %>, <%= JSON.stringify(a.content).replace(/'/g, "\\'") %>)">编辑</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteAnn(<%= a.id %>)">删除</button>
+                        </td>
+                    </tr>
+                    <% }) %>
+                    <% if (announcements.length === 0) { %>
+                    <tr><td colspan="5" class="text-center text-muted py-4">暂无公告</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add/Edit Announcement Modal -->
+    <div class="modal fade" id="addAnnModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title" id="annModalTitle">发布公告</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="annId" value="">
+                    <div class="mb-3"><label class="form-label">标题</label><input type="text" class="form-control" id="annTitle" placeholder="请输入公告标题"></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6"><label class="form-label">类型</label><select class="form-select" id="annType"><option value="notice">通知</option><option value="news">新闻</option><option value="update">更新</option></select></div>
+                        <div class="col-md-6"><label class="form-label">置顶</label><select class="form-select" id="annTop"><option value="0">否</option><option value="1">是</option></select></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">内容</label>
+                        <div class="rich-editor-toolbar">
+                            <button type="button" onclick="execCmd('bold')" title="加粗"><b>B</b></button>
+                            <button type="button" onclick="execCmd('italic')" title="斜体"><i>I</i></button>
+                            <button type="button" onclick="execCmd('underline')" title="下划线"><u>U</u></button>
+                            <span class="separator"></span>
+                            <button type="button" onclick="execCmd('insertUnorderedList')" title="无序列表">&#8226;</button>
+                            <button type="button" onclick="execCmd('insertOrderedList')" title="有序列表">1.</button>
+                            <span class="separator"></span>
+                            <button type="button" onclick="triggerImageUpload()" title="上传本地图片"><i class="bi bi-image"></i> 上传图片</button>
+                            <button type="button" onclick="showVideoModal()" title="插入视频"><i class="bi bi-camera-video"></i> 插入视频</button>
+                            <input type="file" id="imageUploadInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+                        </div>
+                        <div class="rich-editor" id="annContent" contenteditable="true"></div>
+                        <div class="upload-progress" id="uploadProgress">
+                            <div class="progress"><div class="progress-bar" id="uploadProgressBar" role="progressbar" style="width:0%"></div></div>
+                            <small class="text-muted">上传中...</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-admin" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-admin" id="annSubmitBtn" onclick="publishAnn()">发布</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Insert Modal -->
+    <div class="modal fade" id="videoModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">插入视频</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="media-type-tabs">
+                        <button class="active" onclick="switchVideoTab('bilibili', this)"><i class="bi bi-tv"></i> B站视频</button>
+                        <button onclick="switchVideoTab('douyin', this)"><i class="bi bi-music-note-beamed"></i> 抖音</button>
+                        <button onclick="switchVideoTab('other', this)"><i class="bi bi-link-45deg"></i> 其他链接</button>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">视频链接</label>
+                        <input type="text" class="form-control" id="videoUrl" placeholder="粘贴视频链接">
+                        <small class="text-muted mt-1 d-block" id="videoHint">B站视频链接，如：https://www.bilibili.com/video/BV1xx411c7BF</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">宽度（可选）</label>
+                        <input type="text" class="form-control" id="videoWidth" placeholder="默认100%">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-admin" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-admin" onclick="insertVideoFromUrl()">插入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Ratio Adjustment Modal -->
+    <div class="modal fade" id="imageRatioModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">调整图片显示比例</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">显示宽度：<span id="ratioValue">100%</span></label>
+                        <input type="range" class="form-range" id="ratioSlider" min="10" max="100" value="100" oninput="updateRatio()">
+                        <div class="d-flex justify-content-between" style="font-size:12px;color:#666">
+                            <span>10%</span><span>50%</span><span>100%</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">或输入具体宽度（%）</label>
+                        <input type="number" class="form-control" id="ratioInput" min="10" max="100" value="100" oninput="syncSlider()">
+                    </div>
+                    <div class="ratio-preview">预览宽度：<span id="previewText">100%</span></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-admin" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-admin" onclick="applyImageRatio()">应用</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentVideoType = 'bilibili';
+        let currentEditImage = null;
+
+        document.getElementById('addAnnModal').addEventListener('hidden.bs.modal', function () {
+            resetAnnModal();
+        });
+
+        function execCmd(cmd) {
+            document.execCommand(cmd, false, null);
+            document.getElementById('annContent').focus();
+        }
+
+        function triggerImageUpload() {
+            document.getElementById('imageUploadInput').click();
+        }
+
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                alert('请选择图片文件');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const progressDiv = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('uploadProgressBar');
+            progressDiv.style.display = 'block';
+            progressBar.style.width = '0%';
+
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/admin/upload-image', true);
+                xhr.withCredentials = true;
+
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        const percent = (e.loaded / e.total * 100).toFixed(0);
+                        progressBar.style.width = percent + '%';
+                    }
+                };
+
+                xhr.onload = function() {
+                    progressDiv.style.display = 'none';
+                    if (xhr.status === 200) {
+                        try {
+                            const result = JSON.parse(xhr.responseText);
+                            if (result.success) {
+                                const editor = document.getElementById('annContent');
+                                const mediaWrapper = document.createElement('div');
+                                mediaWrapper.className = 'media-wrapper';
+                                mediaWrapper.setAttribute('contenteditable', 'false');
+                                mediaWrapper.setAttribute('data-default-width', '100');
+                                mediaWrapper.innerHTML = '<div class="media-toolbar" style="display:none"><span class="ratio-label">宽度:</span><button onclick="changeImageRatio(this, 25)">25%</button><button onclick="changeImageRatio(this, 50)">50%</button><button onclick="changeImageRatio(this, 75)">75%</button><button onclick="changeImageRatio(this, 100)">100%</button><button onclick="editImageRatio(this.closest(\'div.media-wrapper\'))" title="自定义比例"><i class="bi bi-sliders"></i></button><button onclick="this.closest(\'div.media-wrapper\').remove()" style="color:#ff6b6b">删除</button></div><img src="' + result.url + '" alt="上传图片" style="width:100%;border-radius:8px" onmouseenter="this.parentElement.querySelector(\'.media-toolbar\').style.display=\'flex\'" onmouseleave="this.parentElement.querySelector(\'.media-toolbar\').style.display=\'none\'"><p><br></p>';
+                                editor.focus();
+                                const sel = window.getSelection();
+                                if (sel.rangeCount > 0) {
+                                    const range = sel.getRangeAt(0);
+                                    range.collapse(false);
+                                    const frag = document.createDocumentFragment();
+                                    const pBefore = document.createElement('p');
+                                    pBefore.innerHTML = '<br>';
+                                    frag.appendChild(pBefore);
+                                    frag.appendChild(mediaWrapper);
+                                    const pAfter = document.createElement('p');
+                                    pAfter.innerHTML = '<br>';
+                                    frag.appendChild(pAfter);
+                                    range.insertNode(frag);
+                                    range.setStartAfter(pAfter);
+                                    range.collapse(true);
+                                    sel.removeAllRanges();
+                                    sel.addRange(range);
+                                } else {
+                                    editor.appendChild(mediaWrapper);
+                                }
+                            } else {
+                                alert('上传失败：' + (result.message || '未知错误'));
+                            }
+                        } catch (parseErr) {
+                            alert('上传失败：响应解析错误');
+                            console.error('Parse error:', parseErr, xhr.responseText);
+                        }
+                    } else {
+                        alert('上传失败，状态码：' + xhr.status);
+                        console.error('Upload failed with status:', xhr.status, xhr.responseText);
+                    }
+                };
+
+                xhr.onerror = function() {
+                    progressDiv.style.display = 'none';
+                    alert('上传失败：网络错误');
+                    console.error('XHR network error');
+                };
+
+                xhr.send(formData);
+            } catch (e) {
+                progressDiv.style.display = 'none';
+                alert('上传失败：' + e.message);
+                console.error('Upload exception:', e);
+            }
+
+            event.target.value = '';
+        }
+
+        function showVideoModal() {
+            document.getElementById('videoUrl').value = '';
+            document.getElementById('videoWidth').value = '';
+            new bootstrap.Modal(document.getElementById('videoModal')).show();
+        }
+
+        function switchVideoTab(type, btn) {
+            currentVideoType = type;
+            document.querySelectorAll('.media-type-tabs button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const input = document.getElementById('videoUrl');
+            const hint = document.getElementById('videoHint');
+            if (type === 'bilibili') {
+                input.placeholder = 'https://www.bilibili.com/video/BV1xx411c7BF';
+                hint.textContent = 'B站视频链接，支持BV号和AV号';
+            } else if (type === 'douyin') {
+                input.placeholder = 'https://v.douyin.com/xxxxx/';
+                hint.textContent = '抖音视频分享链接';
+            } else {
+                input.placeholder = 'https://...mp4';
+                hint.textContent = '直接的视频文件链接或嵌入代码';
+            }
+        }
+
+        function getVideoEmbedUrl(url) {
+            if (currentVideoType === 'bilibili') {
+                const bvMatch = url.match(/BV[a-zA-Z0-9]+/);
+                if (bvMatch) {
+                    return { type: 'iframe', url: 'https://player.bilibili.com/player.html?bvid=' + bvMatch[0] + '&high_quality=1&danmaku=0' };
+                }
+                const avMatch = url.match(/av(\d+)/);
+                if (avMatch) {
+                    return { type: 'iframe', url: 'https://player.bilibili.com/player.html?aid=' + avMatch[1] + '&high_quality=1&danmaku=0' };
+                }
+                return null;
+            } else if (currentVideoType === 'douyin') {
+                return { type: 'iframe', url: url };
+            } else {
+                if (url.match(/\.(mp4|webm|ogg)$/i)) {
+                    return { type: 'video', url: url };
+                }
+                return { type: 'iframe', url: url };
+            }
+        }
+
+        function insertVideoFromUrl() {
+            const url = document.getElementById('videoUrl').value.trim();
+            if (!url) { alert('请输入视频链接'); return; }
+
+            const embedInfo = getVideoEmbedUrl(url);
+            if (!embedInfo) { alert('无法解析视频链接，请检查链接格式'); return; }
+
+            const editor = document.getElementById('annContent');
+            editor.focus();
+
+            let html;
+            const width = document.getElementById('videoWidth').value || '100%';
+
+            if (embedInfo.type === 'iframe') {
+                html = '<div class="media-wrapper"><div class="video-container"><iframe src="' + embedInfo.url + '" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups"></iframe></div><button class="media-overlay" onclick="this.parentElement.remove()" title="删除视频">×</button></div><p><br></p>';
+            } else {
+                html = '<div class="media-wrapper"><video controls src="' + embedInfo.url + '" style="width:' + width + '"></video><button class="media-overlay" onclick="this.parentElement.remove()" title="删除视频">×</button></div><p><br></p>';
+            }
+
+            document.execCommand('insertHTML', false, html);
+            bootstrap.Modal.getInstance(document.getElementById('videoModal')).hide();
+        }
+
+        function editAnn(id, title, type, isTop, content) {
+            document.getElementById('annId').value = id;
+            document.getElementById('annTitle').value = title;
+            document.getElementById('annType').value = type;
+            document.getElementById('annTop').value = isTop ? '1' : '0';
+            document.getElementById('annContent').innerHTML = content;
+            document.getElementById('annModalTitle').textContent = '编辑公告';
+            document.getElementById('annSubmitBtn').textContent = '保存修改';
+            new bootstrap.Modal(document.getElementById('addAnnModal')).show();
+        }
+
+        function resetAnnModal() {
+            document.getElementById('annId').value = '';
+            document.getElementById('annTitle').value = '';
+            document.getElementById('annType').value = 'notice';
+            document.getElementById('annTop').value = '0';
+            document.getElementById('annContent').innerHTML = '';
+            document.getElementById('annModalTitle').textContent = '发布公告';
+            document.getElementById('annSubmitBtn').textContent = '发布';
+        }
+
+        async function publishAnn() {
+            const id = document.getElementById('annId').value;
+            const title = document.getElementById('annTitle').value.trim();
+            const content = document.getElementById('annContent').innerHTML;
+            const type = document.getElementById('annType').value;
+            const is_top = document.getElementById('annTop').value;
+
+            if (!title) { alert('请填写标题'); return; }
+            if (!content || content === '<br>') { alert('请填写内容'); return; }
+
+            try {
+                const res = await fetch('/admin/announcements' + (id ? '/' + id + '/edit' : ''), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content, type, is_top })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(id ? '修改失败' : '发布失败');
+                }
+            } catch (e) {
+                alert((id ? '修改' : '发布') + '失败：' + e.message);
+            }
+        }
+
+        async function deleteAnn(id) {
+            if (!confirm('确定删除该公告吗？')) return;
+            try {
+                const res = await fetch('/admin/announcements/' + id + '/delete', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('删除失败');
+                }
+            } catch (e) {
+                alert('删除失败: ' + e.message);
+            }
+        }
+
+        function changeImageRatio(btn, percent) {
+            const mediaWrapper = btn.closest('div.media-wrapper');
+            if (!mediaWrapper) return;
+            const img = mediaWrapper.querySelector('img');
+            if (!img) return;
+            if (percent === -1) {
+                img.style.width = 'auto';
+                img.style.maxWidth = '100%';
+            } else {
+                img.style.width = percent + '%';
+                img.style.maxWidth = '100%';
+            }
+            mediaWrapper.setAttribute('data-default-width', percent);
+        }
+
+        function editImageRatio(mediaWrapper) {
+            currentEditImage = mediaWrapper;
+            const img = mediaWrapper.querySelector('img');
+            if (!img) return;
+            
+            const currentWidth = img.style.width || '100%';
+            const currentPercent = parseInt(currentWidth.replace('%', '')) || 100;
+            
+            document.getElementById('ratioSlider').value = currentPercent;
+            document.getElementById('ratioInput').value = currentPercent;
+            document.getElementById('ratioValue').textContent = currentPercent + '%';
+            document.getElementById('previewText').textContent = currentPercent + '%';
+            
+            new bootstrap.Modal(document.getElementById('imageRatioModal')).show();
+        }
+
+        function updateRatio() {
+            const val = document.getElementById('ratioSlider').value;
+            document.getElementById('ratioValue').textContent = val + '%';
+            document.getElementById('ratioInput').value = val;
+            document.getElementById('previewText').textContent = val + '%';
+        }
+
+        function syncSlider() {
+            const val = document.getElementById('ratioInput').value;
+            if (val >= 10 && val <= 100) {
+                document.getElementById('ratioSlider').value = val;
+                document.getElementById('ratioValue').textContent = val + '%';
+                document.getElementById('previewText').textContent = val + '%';
+            }
+        }
+
+        function applyImageRatio() {
+            if (!currentEditImage) return;
+            const val = document.getElementById('ratioSlider').value;
+            const img = currentEditImage.querySelector('img');
+            if (img) {
+                img.style.width = val + '%';
+            }
+            bootstrap.Modal.getInstance(document.getElementById('imageRatioModal')).hide();
+            currentEditImage = null;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<%- include('layout', { title, body: `
+
+<section class="page-hero announcements-hero" style="padding: 15px 0; min-height: auto;">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <h1 style="font-size: 1.5rem; margin-bottom: 2px;">动态公告</h1>
+        <p style="font-size: 0.85rem; margin: 0; opacity: 0.85;">获取大赛最新资讯和重要通知</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="announcement-filters mb-4">
+            <a href="/announcements" class="filter-btn ${!currentType ? 'active' : ''}">全部</a>
+            <a href="/announcements?type=notice" class="filter-btn ${currentType === 'notice' ? 'active' : ''}">通知</a>
+            <a href="/announcements?type=news" class="filter-btn ${currentType === 'news' ? 'active' : ''}">新闻</a>
+            <a href="/announcements?type=update" class="filter-btn ${currentType === 'update' ? 'active' : ''}">更新</a>
+        </div>
+
+        ${announcements.length === 0 ? `
+        <div class="empty-state">
+            <i class="bi bi-megaphone"></i>
+            <h4>暂无公告</h4>
+            <p>目前还没有相关公告，请稍后查看</p>
+        </div>
+        ` : `
+        <div class="announcement-list">
+            ${announcements.map(function(a) {
+                var typeText = a.type === 'notice' ? '通知' : a.type === 'news' ? '新闻' : '更新';
+                var topTag = a.is_top ? '<span class="top-tag">置顶</span>' : '';
+                var day = new Date(a.created_at).getDate();
+                var month = new Date(a.created_at).getMonth() + 1;
+                var plainContent = a.content.replace(/<[^>]+>/g, '').substring(0, 120);
+                return '<a href="/announcements/' + a.id + '" class="announcement-list-item">' +
+                    '<div class="announcement-list-left">' +
+                    '<span class="announcement-type-tag type-' + a.type + '">' + typeText + '</span>' +
+                    topTag +
+                    '<h4>' + a.title + '</h4>' +
+                    '<p>' + plainContent + '...</p>' +
+                    '</div>' +
+                    '<div class="announcement-list-right">' +
+                    '<div class="announcement-date">' +
+                    '<span class="date-day">' + day + '</span>' +
+                    '<span class="date-month">' + month + '月</span>' +
+                    '</div>' +
+                    '<i class="bi bi-chevron-right announcement-arrow"></i>' +
+                    '</div>' +
+                    '</a>';
+            }).join('')}
+        </div>
+        `}
+    </div>
+</section>
+
+` }) %>

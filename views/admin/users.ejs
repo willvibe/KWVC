@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body{background:#f5f7fa;color:#333;font-family:'Noto Sans SC',-apple-system,'PingFang SC','Microsoft YaHei',sans-serif}
+        .admin-sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:#0d2240;border-right:2px solid #c8a45c;padding:20px 0;z-index:100}
+        .admin-sidebar .sidebar-brand{padding:0 20px 20px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:20px}
+        .admin-sidebar .sidebar-brand h5{color:#c8a45c;margin:0}
+        .admin-sidebar .nav-link{color:rgba(255,255,255,0.6);padding:12px 20px;display:flex;align-items:center;gap:10px;transition:all 0.3s}
+        .admin-sidebar .nav-link:hover,.admin-sidebar .nav-link.active{color:#fff;background:rgba(200,164,92,0.15);border-left:3px solid #c8a45c}
+        .admin-sidebar .nav-link i{font-size:18px}
+        .admin-main{margin-left:240px;padding:30px;min-height:100vh}
+        .admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+        .admin-header h3{color:#1a3a6c;margin:0}
+        .admin-table{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e0e4ea;box-shadow:0 2px 10px rgba(0,0,0,0.04)}
+        .admin-table table{margin:0;color:#333}
+        .admin-table thead{background:#1a3a6c}
+        .admin-table th{color:#fff;font-weight:500;border:none;padding:14px 16px;white-space:nowrap}
+        .admin-table td{border-color:#e0e4ea;padding:12px 16px;vertical-align:middle}
+        .admin-table tbody tr:hover{background:rgba(26,58,108,0.04)}
+        .badge-role{padding:4px 12px;border-radius:20px;font-size:12px}
+        .badge-admin{background:rgba(200,164,92,0.15);color:#a88a3e}
+        .badge-user{background:rgba(26,58,108,0.1);color:#1a3a6c}
+        .btn-admin{background:linear-gradient(135deg,#1a3a6c,#0d2240);border:none;color:#fff}
+        .btn-admin:hover{color:#fff}
+        .btn-outline-admin{border:1px solid #1a3a6c;color:#1a3a6c;background:transparent}
+        .btn-outline-admin:hover{background:#1a3a6c;color:#fff}
+        .btn-sm-admin{padding:3px 10px;font-size:12px;border-radius:4px}
+        .modal-content{background:#fff;border:1px solid #e0e4ea;color:#333}
+        .modal-header{border-bottom-color:#e0e4ea}
+        .form-control{background:#f5f7fa;border:1px solid #e0e4ea;color:#333}
+        .form-control:focus{border-color:#1a3a6c;box-shadow:0 0 0 0.2rem rgba(26,58,108,0.15);background:#fff;color:#333}
+        .form-label{color:#333}
+    </style>
+</head>
+<body>
+    <div class="admin-sidebar">
+        <div class="sidebar-brand"><h5><i class="bi bi-trophy-fill"></i> 凯文杯管理</h5></div>
+        <nav class="nav flex-column">
+            <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> 仪表盘</a>
+            <a class="nav-link active" href="/admin/users"><i class="bi bi-person-gear"></i> 注册用户</a>
+            <a class="nav-link" href="/admin/registrations"><i class="bi bi-people-fill"></i> 报名管理</a>
+            <a class="nav-link" href="/admin/works"><i class="bi bi-folder2-open"></i> 作品管理</a>
+            <a class="nav-link" href="/admin/announcements"><i class="bi bi-megaphone-fill"></i> 公告管理</a>
+            <a class="nav-link" href="/admin/site-config"><i class="bi bi-gear-fill"></i> 首页设置</a>
+            <a class="nav-link" href="/admin/logout">
+            <a class="nav-link" href="/admin/announcements"><i class="bi bi-megaphone-fill"></i> 公告管理</a>
+            <a class="nav-link" href="/admin/logout"><i class="bi bi-box-arrow-left"></i> 退出登录</a>
+        </nav>
+    </div>
+    <div class="admin-main">
+        <div class="admin-header">
+            <h3>用户管理</h3>
+            <span class="text-muted">共 <%= users.length %> 个用户</span>
+        </div>
+        <div class="admin-table">
+            <table class="table table-responsive">
+                <thead><tr><th>ID</th><th>用户名</th><th>真实姓名</th><th>手机</th><th>邮箱</th><th>角色</th><th>注册时间</th><th>操作</th></tr></thead>
+                <tbody>
+                    <% users.forEach(u => { %>
+                    <tr>
+                        <td><%= u.id %></td>
+                        <td><%= u.username %></td>
+                        <td><%= u.real_name || '-' %></td>
+                        <td><%= u.phone || '-' %></td>
+                        <td><%= u.email || '-' %></td>
+                        <td><span class="badge-role badge-<%= u.role %>"><%= u.role === 'admin' ? '管理员' : '普通用户' %></span></td>
+                        <td><%= new Date(u.created_at).toLocaleString('zh-CN') %></td>
+                        <td>
+                            <% if (u.role === 'user') { %>
+                            <button class="btn btn-sm btn-outline-warning btn-sm-admin" onclick="setRole(<%= u.id %>, 'admin')">设为管理员</button>
+                            <% } else { %>
+                            <button class="btn btn-sm btn-outline-primary btn-sm-admin" onclick="setRole(<%= u.id %>, 'user')">设为普通用户</button>
+                            <% } %>
+                            <button class="btn btn-sm btn-outline-info btn-sm-admin" onclick="showResetPwd(<%= u.id %>, '<%= u.username %>')">重置密码</button>
+                            <% if (u.id !== admin.id) { %>
+                            <button class="btn btn-sm btn-outline-danger btn-sm-admin" onclick="deleteUser(<%= u.id %>, '<%= u.username %>')">删除</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }) %>
+                    <% if (users.length === 0) { %>
+                    <tr><td colspan="8" class="text-center text-muted py-4">暂无用户</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="resetPwdModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">重置密码</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <p>为用户 <strong id="resetUsername"></strong> 设置新密码：</p>
+                    <input type="hidden" id="resetUserId">
+                    <div class="mb-3">
+                        <label class="form-label">新密码</label>
+                        <input type="password" class="form-control" id="newPassword" placeholder="至少6个字符" minlength="6">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-admin" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-admin" onclick="resetPassword()">确认重置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function setRole(id, role) {
+            const label = role === 'admin' ? '设为管理员' : '设为普通用户';
+            if (!confirm('确定要将该用户' + label + '吗？')) return;
+            try {
+                const res = await fetch('/admin/users/' + id + '/role', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role }) });
+                const data = await res.json();
+                if (data.success) location.reload(); else alert('操作失败');
+            } catch (e) { alert('操作失败'); }
+        }
+        function showResetPwd(id, username) {
+            document.getElementById('resetUserId').value = id;
+            document.getElementById('resetUsername').textContent = username;
+            document.getElementById('newPassword').value = '';
+            new bootstrap.Modal(document.getElementById('resetPwdModal')).show();
+        }
+        async function resetPassword() {
+            const id = document.getElementById('resetUserId').value;
+            const password = document.getElementById('newPassword').value;
+            if (!password || password.length < 6) { alert('密码至少6个字符'); return; }
+            try {
+                const res = await fetch('/admin/users/' + id + '/reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+                const data = await res.json();
+                if (data.success) { alert('密码重置成功'); bootstrap.Modal.getInstance(document.getElementById('resetPwdModal')).hide(); }
+                else alert('重置失败');
+            } catch (e) { alert('重置失败'); }
+        }
+        async function deleteUser(id, username) {
+            if (!confirm('确定要删除用户 "' + username + '" 吗？该用户的作品也将被删除！')) return;
+            try {
+                const res = await fetch('/admin/users/' + id + '/delete', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) location.reload(); else alert('删除失败');
+            } catch (e) { alert('删除失败'); }
+        }
+    </script>
+</body>
+</html>

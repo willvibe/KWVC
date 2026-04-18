@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root { --primary: #1a3a6c; --gold: #c8a45c; --success: #28a745; --warning: #ffc107; --danger: #dc3545; }
+        body { background: #f5f7fa; color: #333; font-family: 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        .admin-sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 260px; background: linear-gradient(180deg, #0d2240 0%, #1a3a6c 100%); border-right: 3px solid var(--gold); z-index: 100; }
+        .sidebar-brand { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-brand h4 { color: var(--gold); margin: 0; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .sidebar-nav { padding: 12px; }
+        .sidebar-nav .nav-link { color: rgba(255,255,255,0.7); padding: 14px 16px; border-radius: 8px; margin: 4px 0; display: flex; align-items: center; gap: 12px; transition: all 0.3s; font-size: 15px; }
+        .sidebar-nav .nav-link:hover { color: #fff; background: rgba(200,164,92,0.2); }
+        .sidebar-nav .nav-link.active { color: #fff; background: rgba(200,164,92,0.3); border-left: 4px solid var(--gold); font-weight: 600; }
+        .sidebar-nav .nav-link i { font-size: 20px; width: 24px; }
+        .admin-main { margin-left: 260px; padding: 32px; min-height: 100vh; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .admin-header h2 { margin: 0; color: var(--primary); font-weight: 700; font-size: 28px; }
+        .stat-row { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .stat-chip { background: #fff; border: 2px solid #e0e4ea; border-radius: 12px; padding: 20px 28px; text-align: center; cursor: pointer; transition: all 0.3s; flex: 1; min-width: 140px; text-decoration: none; color: inherit; display: block; }
+        .stat-chip:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .stat-chip.active { border-color: var(--primary); background: rgba(26,58,108,0.05); }
+        .stat-chip.total .chip-value { color: var(--primary); }
+        .stat-chip.pending .chip-value { color: var(--warning); }
+        .stat-chip.approved .chip-value { color: var(--success); }
+        .stat-chip.rejected .chip-value { color: var(--danger); }
+        .chip-value { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+        .chip-label { font-size: 14px; color: #666; font-weight: 500; }
+        .section-card { background: #fff; border-radius: 12px; border: 1px solid #e0e4ea; margin-bottom: 24px; overflow: hidden; }
+        .section-header { padding: 20px 24px; border-bottom: 1px solid #e0e4ea; background: #fafafa; }
+        .section-header h4 { margin: 0; color: var(--primary); font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .admin-table { margin: 0; }
+        .admin-table thead { background: var(--primary); }
+        .admin-table th { color: #fff; font-weight: 600; border: none; padding: 14px 20px; font-size: 14px; }
+        .admin-table td { border-color: #e0e4ea; padding: 14px 20px; vertical-align: middle; font-size: 14px; }
+        .admin-table tbody tr:hover { background: rgba(26,58,108,0.04); }
+        .badge-status { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge-submitted, .badge-pending { background: rgba(255,193,7,0.15); color: #b8860b; }
+        .badge-approved { background: rgba(40,167,69,0.15); color: #28a745; }
+        .badge-rejected { background: rgba(220,53,69,0.15); color: #dc3545; }
+        .btn-sm-action { padding: 6px 14px; font-size: 13px; border-radius: 6px; }
+        .detail-modal .modal-header { background: var(--primary); color: #fff; }
+        .detail-modal .modal-header .btn-close { filter: brightness(0) invert(1); }
+        .detail-section { background: #f8f9fc; border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+        .detail-section h5 { color: var(--primary); font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 16px; }
+        .detail-section h5 i { color: var(--gold); }
+        .detail-link { background: #fff; border: 2px solid #e0e4ea; border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--primary); font-weight: 600; transition: all 0.3s; }
+        .detail-link:hover { border-color: var(--primary); background: rgba(26,58,108,0.05); color: var(--primary); }
+        .detail-link i { font-size: 20px; }
+        .pdf-preview { background: #fff; border: 2px solid #e0e4ea; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+        .pdf-preview i { font-size: 36px; color: #dc3545; }
+        .pdf-info { flex: 1; }
+        .pdf-name { font-weight: 600; color: #333; margin-bottom: 4px; }
+        .pdf-size { font-size: 12px; color: #888; }
+        .empty-state { padding: 48px; text-align: center; color: #999; }
+        .work-meta { display: flex; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+        .work-meta-item { display: flex; align-items: center; gap: 8px; }
+        .work-meta-item i { color: var(--gold); }
+        .work-meta-label { color: #888; font-size: 13px; }
+        .work-meta-value { font-weight: 600; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="admin-sidebar">
+        <div class="sidebar-brand"><h4><i class="bi bi-trophy-fill"></i> 凯文杯管理</h4></div>
+        <nav class="sidebar-nav">
+            <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> 仪表盘</a>
+            <a class="nav-link" href="/admin/users"><i class="bi bi-person-gear"></i> 注册用户</a>
+            <a class="nav-link" href="/admin/registrations"><i class="bi bi-people-fill"></i> 报名管理</a>
+            <a class="nav-link active" href="/admin/works"><i class="bi bi-folder2-open"></i> 作品管理</a>
+            <a class="nav-link" href="/admin/announcements"><i class="bi bi-megaphone-fill"></i> 公告管理</a>
+            <a class="nav-link" href="/admin/site-config"><i class="bi bi-gear-fill"></i> 首页设置</a>
+            <a class="nav-link" href="/admin/logout"><i class="bi bi-box-arrow-left"></i> 退出登录</a>
+        </nav>
+    </div>
+
+    <div class="admin-main">
+        <div class="admin-header">
+            <h2>作品管理</h2>
+            <span class="badge badge-<%= currentStatus || 'total' %>" style="font-size:14px;padding:8px 16px;">
+                <%= currentStatus === 'submitted' ? '待审核' : currentStatus === 'approved' ? '已通过' : currentStatus === 'rejected' ? '已拒绝' : '全部' %>作品
+            </span>
+        </div>
+        <div class="stat-row">
+            <a class="stat-chip total <%= !currentStatus ? 'active' : '' %>" href="/admin/works">
+                <div class="chip-value"><%= workTotal %></div>
+                <div class="chip-label">全部作品</div>
+            </a>
+            <a class="stat-chip pending <%= currentStatus === 'submitted' ? 'active' : '' %>" href="/admin/works?status=submitted">
+                <div class="chip-value"><%= workPending %></div>
+                <div class="chip-label">待审核</div>
+            </a>
+            <a class="stat-chip approved <%= currentStatus === 'approved' ? 'active' : '' %>" href="/admin/works?status=approved">
+                <div class="chip-value"><%= workApproved %></div>
+                <div class="chip-label">已通过</div>
+            </a>
+            <a class="stat-chip rejected <%= currentStatus === 'rejected' ? 'active' : '' %>" href="/admin/works?status=rejected">
+                <div class="chip-value"><%= workRejected %></div>
+                <div class="chip-label">已拒绝</div>
+            </a>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">
+                <h4><i class="bi bi-list-ul"></i> 作品列表</h4>
+            </div>
+            <div class="admin-table">
+                <table class="table">
+                    <thead><tr><th>ID</th><th>作品名称</th><th>提交者</th><th>赛道</th><th>提交时间</th><th>状态</th><th>操作</th></tr></thead>
+                    <tbody>
+                        <% if (works.length > 0) { %>
+                            <% works.forEach(w => { %>
+                            <tr>
+                                <td><strong>#<%= w.id %></strong></td>
+                                <td><%= w.title %></td>
+                                <td><%= w.real_name || w.username || '-' %></td>
+                                <td><span class="badge bg-secondary"><%= w.category || '-' %></span></td>
+                                <td><%= new Date(w.submitted_at).toLocaleString('zh-CN') %></td>
+                                <td><span class="badge-status badge-<%= w.status %>"><%= w.status === 'submitted' ? '待审核' : w.status === 'approved' ? '已通过' : '已拒绝' %></span></td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm-action" onclick="showWorkDetail(<%= w.id %>)"><i class="bi bi-eye"></i> 查看详情</button>
+                                    <% if (w.status === 'submitted') { %>
+                                        <button class="btn btn-success btn-sm-action" onclick="updateStatus(<%= w.id %>, 'approved')"><i class="bi bi-check-lg"></i> 通过</button>
+                                        <button class="btn btn-danger btn-sm-action" onclick="updateStatus(<%= w.id %>, 'rejected')"><i class="bi bi-x-lg"></i> 拒绝</button>
+                                    <% } %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr><td colspan="7" class="empty-state"><i class="bi bi-inbox" style="font-size:48px"></i><div style="margin-top:12px">暂无作品数据</div></td></tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade detail-modal" id="workDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-folder-check"></i> 作品详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="workDetailBody">
+                    <div class="text-center py-4"><div class="spinner-border text-primary"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const worksData = <%- JSON.stringify(works) %>;
+        let modal = null;
+
+        function showWorkDetail(id) {
+            const work = worksData.find(w => w.id === id);
+            if (!work) return;
+
+            const statusMap = { submitted: '待审核', approved: '已通过', rejected: '已拒绝' };
+            const statusClass = work.status;
+
+            document.getElementById('workDetailBody').innerHTML = `
+                <div class="work-meta">
+                    <div class="work-meta-item"><i class="bi bi-person"></i><span class="work-meta-label">提交者：</span><span class="work-meta-value">${work.real_name || work.username || '-'}</span></div>
+                    <div class="work-meta-item"><i class="bi bi-tag"></i><span class="work-meta-label">赛道：</span><span class="work-meta-value">${work.category || '-'}</span></div>
+                    <div class="work-meta-item"><i class="bi bi-calendar"></i><span class="work-meta-label">提交时间：</span><span class="work-meta-value">${new Date(work.submitted_at).toLocaleString('zh-CN')}</span></div>
+                </div>
+                <h4 style="margin-bottom:16px;color:#1a3a6c;font-weight:700">${work.title}</h4>
+                <div class="work-meta mb-3">
+                    <span class="badge-status badge-${statusClass}">${statusMap[work.status]}</span>
+                    ${work.tech_platform ? '<span class="badge bg-info" style="margin-left:8px"><i class="bi bi-tools"></i> ' + work.tech_platform + '</span>' : ''}
+                </div>
+
+                <div class="detail-section">
+                    <h5><i class="bi bi-link-45deg"></i> 在线演示（必填）</h5>
+                    ${work.demo_url ? `<a href="${work.demo_url}" target="_blank" class="detail-link"><i class="bi bi-globe2"></i> ${work.demo_url}</a>` : '<div class="text-muted">未提供</div>'}
+                </div>
+
+                <div class="detail-section">
+                    <h5><i class="bi bi-tv"></i> B站演示视频（必填）</h5>
+                    ${work.video_url ? `<a href="${work.video_url}" target="_blank" class="detail-link"><i class="bi bi-youtube"></i> ${work.video_url}</a>` : '<div class="text-muted">未提供</div>'}
+                </div>
+
+                <div class="detail-section">
+                    <h5><i class="bi bi-file-earmark-pdf"></i> README文档（必填）</h5>
+                    ${work.readme_url ? `<div class="pdf-preview"><i class="bi bi-file-earmark-pdf-fill"></i><div class="pdf-info"><div class="pdf-name">项目介绍文档</div><div class="pdf-size">PDF格式</div></div><a href="${work.readme_url}" target="_blank" class="btn btn-primary btn-sm"><i class="bi bi-download"></i> 下载查看</a></div>` : '<div class="text-muted">未上传</div>'}
+                </div>
+
+                ${work.description ? `
+                <div class="detail-section">
+                    <h5><i class="bi bi-card-text"></i> 作品描述</h5>
+                    <div style="background:#fff;padding:16px;border-radius:8px;white-space:pre-wrap;">${work.description}</div>
+                </div>
+                ` : ''}
+
+                <div class="d-flex gap-2 mt-4">
+                    ${work.status === 'submitted' ? `
+                        <button class="btn btn-success flex-fill" onclick="updateStatus('${work.id}', 'approved')"><i class="bi bi-check-circle"></i> 审核通过</button>
+                        <button class="btn btn-danger flex-fill" onclick="updateStatus('${work.id}', 'rejected')"><i class="bi bi-x-circle"></i> 审核拒绝</button>
+                    ` : ''}
+                    <button class="btn btn-secondary flex-fill" data-bs-dismiss="modal">关闭</button>
+                </div>
+            `;
+
+            if (!modal) modal = new bootstrap.Modal(document.getElementById('workDetailModal'));
+            modal.show();
+        }
+
+        async function updateStatus(id, status) {
+            try {
+                const res = await fetch('/admin/works/' + id + '/status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('操作失败');
+                }
+            } catch (e) {
+                alert('操作失败');
+            }
+        }
+    </script>
+</body>
+</html>

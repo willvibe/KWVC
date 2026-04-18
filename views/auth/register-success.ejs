@@ -1,0 +1,22 @@
+<%- include('../layout', { title, body: `
+
+<section class="section" style="min-height: 60vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="success-card">
+                    <div class="success-icon"><i class="bi bi-check-circle-fill"></i></div>
+                    <h2>注册成功！</h2>
+                    <p>恭喜您已成功注册凯文杯大赛账号！</p>
+                    <p>请登录后完成大赛报名和作品提交。</p>
+                    <div class="success-actions">
+                        <a href="/auth/login" class="btn btn-hero-primary">立即登录</a>
+                        <a href="/" class="btn btn-outline-primary">返回首页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+` }) %>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .page-hero { background: linear-gradient(135deg, #1a3a6c 0%, #2d5a87 100%); color: #fff; padding: 80px 0 60px; text-align: center; position: relative; }
+        .page-hero .hero-content { position: relative; z-index: 2; }
+        .page-hero h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; }
+        .page-hero p { font-size: 1.1rem; opacity: 0.9; }
+        .section { padding: 60px 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .highlight-card { background: #fff; border-radius: 16px; padding: 32px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; }
+        .highlight-card:hover { transform: translateY(-5px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .highlight-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #1a3a6c, #2d5a87); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+        .highlight-icon i { font-size: 28px; color: #c8a45c; }
+        .highlight-card h4 { font-size: 2.5rem; font-weight: 700; color: #1a3a6c; margin-bottom: 8px; }
+        .highlight-card p { color: #666; margin: 0; font-size: 1rem; }
+        .admin-table { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .admin-table thead { background: #1a3a6c; }
+        .admin-table th { color: #fff; font-weight: 600; padding: 16px 20px; border: none; font-size: 14px; }
+        .admin-table td { padding: 16px 20px; border-color: #e8eaef; vertical-align: middle; font-size: 14px; }
+        .admin-table tbody tr:hover { background: rgba(26,58,108,0.04); }
+        .badge-status { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge-submitted, .badge-pending { background: rgba(255,193,7,0.15); color: #b8860b; }
+        .badge-reviewing { background: rgba(0,123,255,0.15); color: #0d6efd; }
+        .badge-approved { background: rgba(40,167,69,0.15); color: #28a745; }
+        .badge-rejected { background: rgba(220,53,69,0.15); color: #dc3545; }
+        .empty-state { background: #fff; border-radius: 12px; padding: 60px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .empty-state i { font-size: 64px; color: #d0d5dd; }
+        .empty-state h4 { margin: 20px 0 10px; color: #333; }
+        .empty-state p { color: #888; }
+        .btn-hero-primary { background: linear-gradient(135deg, #1a3a6c, #2d5a87); color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s; }
+        .btn-hero-primary:hover { background: linear-gradient(135deg, #2d5a87, #3d6a97); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,58,108,0.3); }
+        .work-detail-card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .work-detail-card h5 { color: #1a3a6c; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 16px; }
+        .work-detail-card h5 i { color: #c8a45c; }
+        .work-link { background: #f8f9fc; border: 2px solid #e8eaef; border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; text-decoration: none; color: #1a3a6c; font-weight: 600; transition: all 0.3s; }
+        .work-link:hover { border-color: #1a3a6c; background: rgba(26,58,108,0.05); color: #1a3a6c; }
+        .work-link i { font-size: 20px; }
+        .pdf-preview { background: #f8f9fc; border: 2px solid #e8eaef; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+        .pdf-preview i { font-size: 36px; color: #dc3545; }
+        .pdf-info { flex: 1; }
+        .pdf-name { font-weight: 600; color: #333; margin-bottom: 4px; }
+        .pdf-size { font-size: 12px; color: #888; }
+        .btn-sm { padding: 6px 14px; font-size: 13px; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav" style="background: #1a3a6c;">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/images/kaiwen-logo.png" alt="凯文教育" class="nav-logo-img" onerror="this.onerror=null;this.src='/images/logo-white.svg'" style="height:40px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">大赛介绍</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/announcements">动态公告</a></li>
+                    <% if (typeof user !== 'undefined' && user) { %>
+                    <li class="nav-item"><a class="nav-link active" href="/my"><i class="bi bi-person-fill"></i> 个人中心</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> 退出</a></li>
+                    <% } else { %>
+                    <li class="nav-item"><a class="nav-link" href="/auth/login"><i class="bi bi-box-arrow-in-right"></i> 登录</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main style="padding-top: 70px;">
+        <section class="page-hero" style="padding: 15px 0; min-height: auto;">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <h1>个人中心</h1>
+                <p>欢迎回来，<%= user.real_name || user.username %></p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6">
+                        <div class="highlight-card">
+                            <div class="highlight-icon"><i class="bi bi-folder2-open"></i></div>
+                            <h4><%= works.length %></h4>
+                            <p>提交作品</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="highlight-card">
+                            <div class="highlight-icon"><i class="bi bi-trophy"></i></div>
+                            <h4><%= works.filter(w => w.status === 'approved').length %></h4>
+                            <p>通过作品</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 style="color: #1a3a6c; margin: 0;">我的作品</h4>
+                    <a href="/my/submit-work" class="btn btn-hero-primary btn-sm"><i class="bi bi-upload"></i> 提交作品</a>
+                </div>
+
+                <% if (works.length === 0) { %>
+                <div class="empty-state">
+                    <i class="bi bi-folder2-open"></i>
+                    <h4>暂无作品</h4>
+                    <p><a href="/my/submit-work">提交您的参赛作品</a></p>
+                </div>
+                <% } else { %>
+                <div class="admin-table">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>作品名称</th>
+                                <th>赛道</th>
+                                <th>状态</th>
+                                <th>提交时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% works.forEach(function(w) { %>
+                            <tr>
+                                <td><%= w.title %></td>
+                                <td><span class="badge bg-secondary"><%= w.category || '-' %></span></td>
+                                <td>
+                                    <% if (w.status === 'submitted') { %>
+                                        <span class="badge-status badge-submitted">已提交</span>
+                                    <% } else if (w.status === 'reviewing') { %>
+                                        <span class="badge-status badge-reviewing">评审中</span>
+                                    <% } else if (w.status === 'approved') { %>
+                                        <span class="badge-status badge-approved">已通过</span>
+                                    <% } else if (w.status === 'rejected') { %>
+                                        <span class="badge-status badge-rejected">未通过</span>
+                                    <% } else { %>
+                                        <span class="badge-status badge-submitted"><%= w.status %></span>
+                                    <% } %>
+                                </td>
+                                <td><%= new Date(w.submitted_at).toLocaleString('zh-CN') %></td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" onclick="showWorkDetail(<%= w.id %>)"><i class="bi bi-eye"></i> 查看详情</button>
+                                    <% if (w.status === 'submitted') { %>
+                                        <a href="/my/edit-work/<%= w.id %>" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> 编辑</a>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteWork(<%= w.id %>)"><i class="bi bi-trash"></i> 删除</button>
+                                    <% } %>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } %>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal fade" id="workDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #1a3a6c; color: #fff;">
+                    <h5 class="modal-title"><i class="bi bi-folder-check"></i> 作品详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: brightness(0) invert(1);"></button>
+                </div>
+                <div class="modal-body" id="workDetailBody">
+                    <div class="text-center py-4"><div class="spinner-border text-primary"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 凯文教育集团 版权所有 | 凯文杯-首届VibeCoding零代码项目创作大赛</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const worksData = <%- JSON.stringify(works) %>;
+        let modal = null;
+
+        function showWorkDetail(id) {
+            const work = worksData.find(w => w.id === id);
+            if (!work) return;
+
+            const statusMap = {
+                'submitted': '已提交',
+                'reviewing': '评审中',
+                'approved': '已通过',
+                'rejected': '未通过'
+            };
+            const statusClass = work.status;
+            const statusText = statusMap[work.status] || work.status;
+
+            let html = `
+                <div class="work-detail-card">
+                    <h5><i class="bi bi-box-seam"></i> 作品信息</h5>
+                    <h4 style="color:#1a3a6c;font-weight:700;margin-bottom:12px;">${work.title || '-'}</h4>
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+                        <span class="badge bg-secondary">${work.category || '-'}</span>
+                        <span class="badge-status badge-${statusClass}">${statusText}</span>
+                        ${work.tech_platform ? '<span class="badge bg-info"><i class="bi bi-tools"></i> ' + work.tech_platform + '</span>' : ''}
+                    </div>
+                    <div style="color:#888;font-size:13px;margin-top:8px;">
+                        <i class="bi bi-calendar"></i> 提交时间：${new Date(work.submitted_at).toLocaleString('zh-CN')}
+                    </div>
+                </div>
+
+                <div class="work-detail-card">
+                    <h5><i class="bi bi-link-45deg"></i> 在线演示</h5>
+                    ${work.demo_url ? `<a href="${work.demo_url}" target="_blank" class="work-link"><i class="bi bi-globe2"></i> ${work.demo_url}</a>` : '<div class="text-muted">未提供</div>'}
+                </div>
+
+                <div class="work-detail-card">
+                    <h5><i class="bi bi-tv"></i> B站演示视频</h5>
+                    ${work.video_url ? `<a href="${work.video_url}" target="_blank" class="work-link"><i class="bi bi-youtube"></i> ${work.video_url}</a>` : '<div class="text-muted">未提供</div>'}
+                </div>
+
+                <div class="work-detail-card">
+                    <h5><i class="bi bi-file-earmark-pdf"></i> README文档</h5>
+                    ${work.readme_url ? `<div class="pdf-preview"><i class="bi bi-file-earmark-pdf-fill"></i><div class="pdf-info"><div class="pdf-name">项目介绍文档</div><div class="pdf-size">PDF格式</div></div><a href="${work.readme_url}" target="_blank" class="btn btn-primary btn-sm"><i class="bi bi-download"></i> 下载查看</a></div>` : '<div class="text-muted">未上传</div>'}
+                </div>
+            `;
+
+            if (work.description) {
+                html += `
+                    <div class="work-detail-card">
+                        <h5><i class="bi bi-card-text"></i> 作品描述</h5>
+                        <div style="background:#f8f9fc;padding:16px;border-radius:8px;white-space:pre-wrap;">${work.description}</div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('workDetailBody').innerHTML = html;
+
+            if (!modal) modal = new bootstrap.Modal(document.getElementById('workDetailModal'));
+            modal.show();
+        }
+
+        async function deleteWork(id) {
+            if (!confirm('确定要删除这个作品吗？删除后无法恢复。')) return;
+            try {
+                const res = await fetch('/my/delete-work/' + id, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || '删除失败');
+                }
+            } catch (e) {
+                alert('删除失败');
+            }
+        }
+    </script>
+</body>
+</html>

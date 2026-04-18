@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f5f7fa; color: #333; font-family: 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        .admin-sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 240px; background: #0d2240; border-right: 2px solid #c8a45c; padding: 20px 0; z-index: 100; }
+        .admin-sidebar .sidebar-brand { padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        .admin-sidebar .sidebar-brand h5 { color: #c8a45c; margin: 0; }
+        .admin-sidebar .nav-link { color: rgba(255,255,255,0.6); padding: 12px 20px; display: flex; align-items: center; gap: 10px; transition: all 0.3s; }
+        .admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active { color: #fff; background: rgba(200,164,92,0.15); border-left: 3px solid #c8a45c; }
+        .admin-sidebar .nav-link i { font-size: 18px; }
+        .admin-main { margin-left: 240px; padding: 30px; min-height: 100vh; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .admin-header h3 { color: #1a3a6c; margin: 0; }
+        .config-section { background: #fff; border: 1px solid #e0e4ea; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+        .config-section h4 { color: #1a3a6c; margin-bottom: 20px; font-size: 16px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f0f0f0; padding-bottom: 12px; }
+        .config-section h4 i { color: #c8a45c; }
+        .config-section h4 .subtitle { font-size: 12px; color: #888; font-weight: normal; margin-left: 10px; }
+        .form-label { font-weight: 500; font-size: 13px; color: #555; margin-bottom: 6px; }
+        .form-control:focus { border-color: #1a3a6c; box-shadow: 0 0 0 0.2rem rgba(26,58,108,0.15); }
+        .btn-save { background: linear-gradient(135deg, #1a3a6c, #0d2240); border: none; color: #fff; padding: 10px 30px; font-weight: 500; }
+        .btn-save:hover { background: linear-gradient(135deg, #0d2240, #1a3a6c); color: #fff; }
+        .prize-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .prize-card { background: #f8f9fc; border: 1px solid #e8eaf0; border-radius: 10px; padding: 16px; }
+        .prize-card .prize-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .prize-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; color: #fff; }
+        .prize-badge.gold { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #5d4200; }
+        .prize-badge.silver { background: linear-gradient(135deg, #c0c0c0, #a8a8a8); color: #333; }
+        .prize-badge.bronze { background: linear-gradient(135deg, #cd7f32, #a0522d); }
+        .prize-badge.special { background: linear-gradient(135deg, #9370db, #6a5acd); }
+        .prize-card input, .prize-card textarea { font-size: 13px; }
+        .special-prizes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+        .timeline-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .stat-item { background: #f8f9fc; border-radius: 8px; padding: 12px; text-align: center; }
+        .stat-item label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
+        .stat-item input { font-size: 14px; text-align: center; font-weight: 500; }
+        .toast { position: fixed; top: 20px; right: 20px; padding: 14px 28px; background: #28a745; color: #fff; border-radius: 8px; z-index: 9999; font-weight: 500; display: none; }
+    </style>
+</head>
+<body>
+    <div class="admin-sidebar">
+        <div class="sidebar-brand"><h5><i class="bi bi-trophy-fill"></i> 凯文杯管理</h5></div>
+        <nav class="nav flex-column">
+            <a class="nav-link" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> 仪表盘</a>
+            <a class="nav-link" href="/admin/registrations"><i class="bi bi-people-fill"></i> 报名管理</a>
+            <a class="nav-link" href="/admin/works"><i class="bi bi-folder2-open"></i> 作品管理</a>
+            <a class="nav-link" href="/admin/announcements"><i class="bi bi-megaphone-fill"></i> 公告管理</a>
+            <a class="nav-link active" href="/admin/site-config"><i class="bi bi-gear-fill"></i> 首页设置</a>
+            <a class="nav-link" href="/admin/logout"><i class="bi bi-box-arrow-left"></i> 退出登录</a>
+        </nav>
+    </div>
+
+    <div class="admin-main">
+        <div class="admin-header">
+            <h3><i class="bi bi-sliders"></i> 首页内容设置</h3>
+        </div>
+
+        <form id="siteConfigForm">
+            <div class="config-section">
+                <h4><i class="bi bi-image"></i> 大赛标题设置</h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">主标题（金色第一行）</label>
+                        <input type="text" class="form-control" name="hero_title" value="<%= config.hero_title || '' %>" placeholder="例如：凯文杯·首届">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">标题字号(px)</label>
+                        <input type="number" class="form-control" name="hero_title_size" value="<%= config.hero_title_size || '' %>" placeholder="60">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">副标题字号(px)</label>
+                        <input type="number" class="form-control" name="hero_subtitle2_size" value="<%= config.hero_subtitle2_size || '' %>" placeholder="36">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">副标题（白色第二行）</label>
+                        <input type="text" class="form-control" name="hero_subtitle2" value="<%= config.hero_subtitle2 || '' %>" placeholder="例如：首届VibeCoding零代码项目创作大赛">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">主题口号（白色第三行）</label>
+                        <input type="text" class="form-control" name="hero_slogan" value="<%= config.hero_slogan || '' %>" placeholder="例如：Code is cheap! Show your idea!">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h4><i class="bi bi-trophy"></i> 奖项设置 <span class="subtitle">金额和名额可编辑，奖励内容每行一条</span></h4>
+                <div class="prize-grid">
+                    <div class="prize-card">
+                        <div class="prize-header">
+                            <span class="prize-badge gold">一等奖</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label">奖项名称</label>
+                                <input type="text" class="form-control" name="prize_1st_name_zh" value="<%= config.prize_1st_name_zh || '一等奖' %>">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">名额</label>
+                                <input type="text" class="form-control" name="prize_1st_count" value="<%= config.prize_1st_count || '1' %>">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">奖励内容（每行一条）</label>
+                            <textarea class="form-control" name="prize_1st_details_zh" rows="3"><%= config.prize_1st_details_zh || '凯文教育实习机会\n荣誉证书' %></textarea>
+                        </div>
+                    </div>
+                    <div class="prize-card">
+                        <div class="prize-header">
+                            <span class="prize-badge silver">二等奖</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label">奖项名称</label>
+                                <input type="text" class="form-control" name="prize_2nd_name_zh" value="<%= config.prize_2nd_name_zh || '二等奖' %>">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">名额</label>
+                                <input type="text" class="form-control" name="prize_2nd_count" value="<%= config.prize_2nd_count || '2' %>">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">奖励内容（每行一条）</label>
+                            <textarea class="form-control" name="prize_2nd_details_zh" rows="3"><%= config.prize_2nd_details_zh || '凯文教育实习机会\n荣誉证书' %></textarea>
+                        </div>
+                    </div>
+                    <div class="prize-card">
+                        <div class="prize-header">
+                            <span class="prize-badge bronze">三等奖</span>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label">奖项名称</label>
+                                <input type="text" class="form-control" name="prize_3rd_name_zh" value="<%= config.prize_3rd_name_zh || '三等奖' %>">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">名额</label>
+                                <input type="text" class="form-control" name="prize_3rd_count" value="<%= config.prize_3rd_count || '3' %>">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">奖励内容（每行一条）</label>
+                            <textarea class="form-control" name="prize_3rd_details_zh" rows="3"><%= config.prize_3rd_details_zh || '凯文教育实习机会\n荣誉证书' %></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-prizes">
+                    <div class="prize-card">
+                        <div class="prize-header">
+                            <span class="prize-badge special">最佳创意奖</span>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">奖项名称</label>
+                            <input type="text" class="form-control" name="prize_creative_name_zh" value="<%= config.prize_creative_name_zh || '最佳创意奖' %>">
+                        </div>
+                        <div>
+                            <label class="form-label">奖励内容（每行一条）</label>
+                            <textarea class="form-control" name="prize_creative_details_zh" rows="2"><%= config.prize_creative_details_zh || '' %></textarea>
+                        </div>
+                    </div>
+                    <div class="prize-card">
+                        <div class="prize-header">
+                            <span class="prize-badge special">最佳技术奖</span>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">奖项名称</label>
+                            <input type="text" class="form-control" name="prize_tech_name_zh" value="<%= config.prize_tech_name_zh || '最佳技术奖' %>">
+                        </div>
+                        <div>
+                            <label class="form-label">奖励内容（每行一条）</label>
+                            <textarea class="form-control" name="prize_tech_details_zh" rows="2"><%= config.prize_tech_details_zh || '' %></textarea>
+                        </div>
+                    </div>
+                    <div class="prize-card">
+                        <div class="prize-header">
+                            <span class="prize-badge special">最佳人气奖</span>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">奖项名称</label>
+                            <input type="text" class="form-control" name="prize_popular_name_zh" value="<%= config.prize_popular_name_zh || '最佳人气奖' %>">
+                        </div>
+                        <div>
+                            <label class="form-label">奖励内容（每行一条）</label>
+                            <textarea class="form-control" name="prize_popular_details_zh" rows="2"><%= config.prize_popular_details_zh || '' %></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h4><i class="bi bi-bar-chart"></i> 大赛数据</h4>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <label>奖金池(元)</label>
+                        <input type="text" class="form-control" name="prize_pool" value="<%= config.prize_pool || '' %>" placeholder="100000">
+                    </div>
+                    <div class="stat-item">
+                        <label>赛道数</label>
+                        <input type="text" class="form-control" name="track_count" value="<%= config.track_count || '' %>" placeholder="5">
+                    </div>
+                    <div class="stat-item">
+                        <label>专家数</label>
+                        <input type="text" class="form-control" name="judge_count" value="<%= config.judge_count || '' %>" placeholder="30">
+                    </div>
+                    <div class="stat-item">
+                        <label>预计参赛人数</label>
+                        <input type="text" class="form-control" name="expected_participants" value="<%= config.expected_participants || '' %>" placeholder="1000">
+                    </div>
+                </div>
+                <div class="stat-grid mt-3">
+                    <div class="stat-item">
+                        <label>奖金池名称</label>
+                        <input type="text" class="form-control" name="stat_1st_label" value="<%= config.stat_1st_label || '' %>" placeholder="奖金池(元)">
+                    </div>
+                    <div class="stat-item">
+                        <label>赛道名称</label>
+                        <input type="text" class="form-control" name="stat_2nd_label" value="<%= config.stat_2nd_label || '' %>" placeholder="大赛赛道">
+                    </div>
+                    <div class="stat-item">
+                        <label>专家名称</label>
+                        <input type="text" class="form-control" name="stat_3rd_label" value="<%= config.stat_3rd_label || '' %>" placeholder="评审专家">
+                    </div>
+                    <div class="stat-item">
+                        <label>参赛人数名称</label>
+                        <input type="text" class="form-control" name="stat_4th_label" value="<%= config.stat_4th_label || '' %>" placeholder="预计参赛">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h4><i class="bi bi-list-check"></i> 大赛赛道</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">赛道列表（每行一个）</label>
+                        <textarea class="form-control" name="categories" rows="5"><%= config.categories || '智慧教育\n数字商业\n智慧城市\n健康医疗\n开放创新' %></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h4><i class="bi bi-clock"></i> 大赛时间线</h4>
+                <div class="timeline-grid">
+                    <div>
+                        <label class="form-label">报名阶段</label>
+                        <input type="text" class="form-control" name="timeline_registration_zh" value="<%= config.timeline_registration_zh || '' %>" placeholder="2026.04.01 - 06.30">
+                    </div>
+                    <div>
+                        <label class="form-label">作品开发</label>
+                        <input type="text" class="form-control" name="timeline_development" value="<%= config.timeline_development || '' %>" placeholder="2026.05.01 - 07.31">
+                    </div>
+                    <div>
+                        <label class="form-label">初赛评审</label>
+                        <input type="text" class="form-control" name="timeline_preliminary" value="<%= config.timeline_preliminary || '' %>" placeholder="2026.08.01 - 08.15">
+                    </div>
+                    <div>
+                        <label class="form-label">决赛路演</label>
+                        <input type="text" class="form-control" name="timeline_final" value="<%= config.timeline_final || '' %>" placeholder="2026.08.25">
+                    </div>
+                    <div>
+                        <label class="form-label">颁奖典礼</label>
+                        <input type="text" class="form-control" name="timeline_award" value="<%= config.timeline_award || '' %>" placeholder="2026.08.30">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-save"><i class="bi bi-check-lg"></i> 保存设置</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="toast" id="toast"><i class="bi bi-check-circle"></i> 保存成功！</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('siteConfigForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const body = {};
+            fd.forEach((v, k) => body[k] = v);
+            try {
+                const res = await fetch('/admin/site-config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const t = document.getElementById('toast');
+                    t.style.display = 'block';
+                    t.style.background = '#28a745';
+                    setTimeout(() => t.style.display = 'none', 2500);
+                } else {
+                    alert('保存失败');
+                }
+            } catch (err) {
+                alert('保存失败: ' + err.message);
+            }
+        });
+    </script>
+</body>
+</html>

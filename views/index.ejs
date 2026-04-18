@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/images/kaiwen-logo.png" alt="凯文教育" class="nav-logo-img" onerror="this.onerror=null;this.src='/images/logo-white.svg'">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">大赛介绍</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/announcements">动态公告</a>
+                    </li>
+                    <% if (typeof user !== 'undefined' && user) { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my"><i class="bi bi-person-fill"></i> 个人中心</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> 退出</a>
+                    </li>
+                    <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login"><i class="bi bi-box-arrow-in-right"></i> 登录</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register"><i class="bi bi-person-plus"></i> 注册</a>
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-overlay"></div>
+            <div class="hero-particles" id="particles"></div>
+            <div class="container hero-content">
+                <div class="hero-badge">🏆 首届大赛 · 荣耀启航</div>
+                <h1 class="hero-title">
+                    <span class="title-highlight" style="<%= siteConfig.hero_title_size ? 'font-size:' + siteConfig.hero_title_size + 'px;' : '' %>"><%= siteConfig.hero_title || '凯文杯' %></span>
+                    <span class="hero-title-sub" style="<%= siteConfig.hero_subtitle2_size ? 'font-size:' + siteConfig.hero_subtitle2_size + 'px;' : '' %>"><%= siteConfig.hero_subtitle2 || '首届VibeCoding零代码项目创作大赛' %></span>
+                </h1>
+                <p class="hero-subtitle" style="<%= siteConfig.hero_slogan_size ? 'font-size:' + siteConfig.hero_slogan_size + 'px;' : '' %>"><%= siteConfig.hero_slogan || 'Code is cheap! Show your idea!' %></p>
+                <div class="hero-buttons">
+                    <a href="/register" class="btn btn-hero-primary">
+                        <i class="bi bi-rocket-takeoff-fill"></i> 立即报名
+                    </a>
+                    <a href="/about" class="btn btn-hero-secondary">
+                        <i class="bi bi-info-circle"></i> 了解详情
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="<%= siteConfig.prize_pool || 100000 %>">0</div>
+                        <div class="stat-label"><%= siteConfig.stat_1st_label || '奖金池(元)' %></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="<%= siteConfig.track_count || 5 %>">0</div>
+                        <div class="stat-label"><%= siteConfig.stat_2nd_label || '大赛赛道' %></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="<%= siteConfig.judge_count || 30 %>">0</div>
+                        <div class="stat-label"><%= siteConfig.stat_3rd_label || '评审专家' %></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="<%= siteConfig.expected_participants || 1000 %>">0</div>
+                        <div class="stat-label"><%= siteConfig.stat_4th_label || '预计参赛' %></div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-scroll-hint">
+                <i class="bi bi-chevron-double-down"></i>
+            </div>
+        </section>
+        <section class="section highlights-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">大赛亮点</span>
+                    <h2 class="section-title">为什么参加凯文杯？</h2>
+                    <p class="section-desc">零代码开发正在改变世界，凯文杯为你提供展示才华的舞台</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="highlight-card">
+                            <div class="highlight-icon"><i class="bi bi-lightbulb-fill"></i></div>
+                            <h4>创新驱动</h4>
+                            <p>零代码平台让创意不再受技术门槛限制，人人都是创造者</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="highlight-card">
+                            <div class="highlight-icon"><i class="bi bi-cash-stack"></i></div>
+                            <h4>丰厚奖金</h4>
+                            <p>总奖金池超10万元，更有凯文教育实习机会等你来拿</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="highlight-card">
+                            <div class="highlight-icon"><i class="bi bi-people-fill"></i></div>
+                            <h4>大咖评审</h4>
+                            <p>行业顶尖专家坐镇评审，为你提供专业指导与反馈</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="highlight-card">
+                            <div class="highlight-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                            <h4>职业发展</h4>
+                            <p>优秀选手可获得凯文教育集团实习及就业推荐机会</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section timeline-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">赛程安排</span>
+                    <h2 class="section-title">大赛时间线</h2>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item active">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date"><%= siteConfig.timeline_registration || '2026.04.01 - 06.30' %></div>
+                            <h4>报名阶段</h4>
+                            <p>在线填写报名信息，选择参赛赛道</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date"><%= siteConfig.timeline_development || '2026.05.01 - 07.31' %></div>
+                            <h4>作品开发</h4>
+                            <p>使用零代码平台开发参赛项目</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date"><%= siteConfig.timeline_preliminary || '2026.08.01 - 08.15' %></div>
+                            <h4>初赛评审</h4>
+                            <p>专家评审团对作品进行初评</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date"><%= siteConfig.timeline_final || '2026.08.25' %></div>
+                            <h4>决赛路演</h4>
+                            <p>入围选手现场路演展示</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date"><%= siteConfig.timeline_award || '2026.08.30' %></div>
+                            <h4>颁奖典礼</h4>
+                            <p>公布获奖名单并颁发奖项</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section prizes-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">奖项设置</span>
+                    <h2 class="section-title">丰厚奖励等你来</h2>
+                </div>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="prize-card prize-gold">
+                            <div class="prize-medal">🥇</div>
+                            <h3><%= siteConfig.prize_1st_name_zh || '一等奖' %></h3>
+                            <div class="prize-count"><%= siteConfig.prize_1st_count || '1' %> 名</div>
+                            <ul class="prize-details">
+                                <% const details1st = (siteConfig.prize_1st_details_zh || '凯文教育实习机会\n荣誉证书').split('\n'); %>
+                                <% details1st.forEach(d => { %><li><%= d %></li><% }); %>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="prize-card prize-silver">
+                            <div class="prize-medal">🥈</div>
+                            <h3><%= siteConfig.prize_2nd_name_zh || '二等奖' %></h3>
+                            <div class="prize-count"><%= siteConfig.prize_2nd_count || '2' %> 名</div>
+                            <ul class="prize-details">
+                                <% const details2nd = (siteConfig.prize_2nd_details_zh || '凯文教育实习机会\n荣誉证书').split('\n'); %>
+                                <% details2nd.forEach(d => { %><li><%= d %></li><% }); %>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="prize-card prize-bronze">
+                            <div class="prize-medal">🥉</div>
+                            <h3><%= siteConfig.prize_3rd_name_zh || '三等奖' %></h3>
+                            <div class="prize-count"><%= siteConfig.prize_3rd_count || '3' %> 名</div>
+                            <ul class="prize-details">
+                                <% const details3rd = (siteConfig.prize_3rd_details_zh || '凯文教育实习机会\n荣誉证书').split('\n'); %>
+                                <% details3rd.forEach(d => { %><li><%= d %></li><% }); %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-4 mt-2 justify-content-center">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="prize-card prize-special">
+                            <div class="prize-medal">🏆</div>
+                            <h4><%= siteConfig.prize_creative_name_zh || '最佳创意奖' %></h4>
+                            <% if (siteConfig.prize_creative_details_zh) { %>
+                            <ul class="prize-details">
+                                <% const detailsCreative = siteConfig.prize_creative_details_zh.split('\n'); %>
+                                <% detailsCreative.forEach(d => { %><li><%= d %></li><% }); %>
+                            </ul>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="prize-card prize-special">
+                            <div class="prize-medal">🏆</div>
+                            <h4><%= siteConfig.prize_tech_name_zh || '最佳技术奖' %></h4>
+                            <% if (siteConfig.prize_tech_details_zh) { %>
+                            <ul class="prize-details">
+                                <% const detailsTech = siteConfig.prize_tech_details_zh.split('\n'); %>
+                                <% detailsTech.forEach(d => { %><li><%= d %></li><% }); %>
+                            </ul>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="prize-card prize-special">
+                            <div class="prize-medal">🏆</div>
+                            <h4><%= siteConfig.prize_popular_name_zh || '最佳人气奖' %></h4>
+                            <% if (siteConfig.prize_popular_details_zh) { %>
+                            <ul class="prize-details">
+                                <% const detailsPopular = siteConfig.prize_popular_details_zh.split('\n'); %>
+                                <% detailsPopular.forEach(d => { %><li><%= d %></li><% }); %>
+                            </ul>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section announcements-home-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">最新动态</span>
+                    <h2 class="section-title">大赛公告</h2>
+                    <a href="/announcements" class="section-more">查看全部 <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div class="row g-4">
+                    <% announcements.forEach(a => { %>
+                    <div class="col-lg-6 col-md-12">
+                        <a href="/announcements/<%= a.id %>" class="announcement-card-link">
+                            <div class="announcement-card">
+                                <div class="announcement-type-badge type-<%= a.type %>">
+                                    <%= a.type === 'notice' ? '通知' : a.type === 'news' ? '新闻' : '更新' %>
+                                </div>
+                                <% if (a.is_top) { %><span class="top-badge">置顶</span><% } %>
+                                <h4><%= a.title %></h4>
+                                <p><%= a.content.substring(0, 100) %>...</p>
+                                <div class="announcement-meta">
+                                    <span><i class="bi bi-clock"></i> <%= new Date(a.created_at).toLocaleDateString('zh-CN') %></span>
+                                    <span class="read-more">阅读详情 <i class="bi bi-arrow-right"></i></span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+        </section>
+        <section class="section cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>准备好展示你的创意了吗？</h2>
+                    <p>加入凯文杯，用零代码创造无限可能</p>
+                    <a href="/register" class="btn btn-cta">
+                        <i class="bi bi-rocket-takeoff-fill"></i> 立即报名参赛
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-brand">
+                        <img src="/images/kaiwen-logo2.png" alt="凯文教育" class="footer-logo-img" onerror="this.onerror=null;this.src='/images/logo-white.svg'">
+                        <p class="mt-3">凯文教育集团（证券代码：002659）是一家以提供优质国际教育服务、高品质素质教育服务、现代职业教育服务三大主营业务为核心的教育集团。</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5>快速链接</h5>
+                    <ul class="footer-links">
+                        <li><a href="/">首页</a></li>
+                        <li><a href="/about">大赛介绍</a></li>
+                        <li><a href="/announcements">动态公告</a></li>
+                        <li><a href="/register">大赛报名</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-12 mb-4">
+                    <h5>联系我们</h5>
+                    <ul class="footer-contact">
+                        <li><i class="bi bi-geo-alt-fill"></i> 北京市海淀区西三环北路甲2号院5号楼15层</li>
+                        <li><i class="bi bi-envelope-fill"></i> kwe.marketing@kaiwenedu.org</li>
+                        <li><i class="bi bi-globe"></i> <a href="https://www.kaiwenedu.com" target="_blank">www.kaiwenedu.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 凯文教育集团 版权所有 | 凯文杯-首届VibeCoding零代码项目创作大赛</p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="backToTop" class="back-to-top" title="返回顶部">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
