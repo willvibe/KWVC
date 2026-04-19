@@ -70,12 +70,12 @@
                         <input type="text" class="form-control" name="hero_title" value="<%= config.hero_title || '' %>" placeholder="例如：凯文杯·首届">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">标题字号(px)</label>
-                        <input type="number" class="form-control" name="hero_title_size" value="<%= config.hero_title_size || '' %>" placeholder="60">
+                        <label class="form-label">标题字号(em)</label>
+                        <input type="number" class="form-control" name="hero_title_size" value="<%= config.hero_title_size || '' %>" step="0.1" min="1" max="10" placeholder="3.75">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">副标题字号(px)</label>
-                        <input type="number" class="form-control" name="hero_subtitle2_size" value="<%= config.hero_subtitle2_size || '' %>" placeholder="36">
+                        <label class="form-label">副标题字号(em)</label>
+                        <input type="number" class="form-control" name="hero_subtitle2_size" value="<%= config.hero_subtitle2_size || '' %>" step="0.1" min="1" max="10" placeholder="2.25">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">副标题（白色第二行）</label>
@@ -84,6 +84,10 @@
                     <div class="col-md-6">
                         <label class="form-label">主题口号（白色第三行）</label>
                         <input type="text" class="form-control" name="hero_slogan" value="<%= config.hero_slogan || '' %>" placeholder="例如：Code is cheap! Show your idea!">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">口号字号(em)</label>
+                        <input type="number" class="form-control" name="hero_slogan_size" value="<%= config.hero_slogan_size || '' %>" step="0.1" min="1" max="10" placeholder="1.5">
                     </div>
                 </div>
             </div>
