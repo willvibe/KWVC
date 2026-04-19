@@ -38,8 +38,8 @@ const upload = multer({
     }
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(session({
     secret: 'kwvc-secret-key-2026',
     resave: false,
