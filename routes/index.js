@@ -11,14 +11,14 @@ router.get('/', async (req, res) => {
             'SELECT * FROM announcements WHERE status = 1 ORDER BY is_top DESC, created_at DESC LIMIT 5'
         );
         res.render('index', {
-            title: '凯文杯-首届VibeCoding零代码项目创作大赛',
+            title: '凯文杯-VibeCoding零代码项目创作大赛',
             announcements,
             siteConfig
         });
     } catch (err) {
         console.error(err);
         res.render('index', {
-            title: '凯文杯-首届VibeCoding零代码项目创作大赛',
+            title: '凯文杯-VibeCoding零代码项目创作大赛',
             announcements: [],
             siteConfig: {}
         });
