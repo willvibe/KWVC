@@ -169,8 +169,13 @@ a {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: url('/images/campus-gate.jpg') center/cover no-repeat;
+    display: flex;
     opacity: 0.12;
+}
+.hero-overlay img {
+    width: 33.333%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .hero-particles {
